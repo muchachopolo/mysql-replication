@@ -49,6 +49,7 @@ docker-compose ps
 ```
 rm -rf ./master/data/*
 rm -rf ./slave/data/*
+rm -rf ./slave2/data/*
 ```
 
 #### Run command inside "mysql_master"
@@ -74,3 +75,24 @@ docker exec -it mysql_master bash
 ```
 docker exec -it mysql_slave bash
 ```
+
+### Manual testing
+
+docker exec -it mysql_master bash
+mysql -u root -p'111' mydb
+mysql> create table if not exists code(code int);
+mysql> insert into code values (100), (200);
+
+docker exec -it mysql_slave bash
+mysql -u root -p'111' mydb
+mysql> select * from code;
+
+SHOW SLAVE STATUS;
+SHOW MASTER STATUS;
+
+### Replication Type
+
+binlog_format = ROW
+
+Possible values are ROW (replica replay only actual changes on the row), STATEMENT (replica replay all the queries that changes the data), MIXED (statement-based replication is used unless server decides only row-based replication can give proper result, like replicating result of GUUID() ).
+
